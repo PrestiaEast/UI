@@ -1,16 +1,13 @@
 package com.example.ui
 
 import android.app.DatePickerDialog
+import android.content.Intent
 import android.icu.util.Calendar
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
-import android.widget.SeekBar
-import android.widget.Switch
-import android.widget.TextView
-import com.google.android.material.slider.Slider
+import android.widget.*
 
 class nextPage : AppCompatActivity() {
 
@@ -20,13 +17,15 @@ class nextPage : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_next_page)
 
+        val button = findViewById<Button>(R.id.finish)
+
         slider = findViewById<SeekBar>(R.id.seekBar)
         value = findViewById<TextView>(R.id.displayAge)
 
         slider.max = 60
         slider.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                value.text = "Select Age: " + progress.toString()
+                value.text = "" + progress.toString()
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -34,13 +33,13 @@ class nextPage : AppCompatActivity() {
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-                value.text = "Age : " + seekBar.progress
+                value.text = "" + seekBar.progress
             }
         })
 
 
         val mPickTimeBtn = findViewById<Button>(R.id.birth)
-        val textView = findViewById<TextView>(R.id.birthDate)
+        val birthView = findViewById<TextView>(R.id.birthDate)
 
         val c = Calendar.getInstance()
         val year = c.get(Calendar.YEAR)
@@ -52,17 +51,18 @@ class nextPage : AppCompatActivity() {
 
             val dpd = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
                 // Display Selected date in TextView
-                textView.text = "$dayOfMonth $month, $year"
+                birthView.text = "$dayOfMonth $month, $year"
             }, year, month, day)
             dpd.show()
 
         }
 
-        val ViewGroup = findViewById<Switch>(R.id.switchNum)
-        val numberFormatException = findViewById<TextView>(R.id.number)
 
-        ViewGroup.setOnClickListener{
-            numberFormatException.visibility = if (ViewGroup.visibility == View.INVISIBLE){
+        val ViewGroup = findViewById<Switch>(R.id.switchNum)
+        val number = findViewById<EditText>(R.id.number)
+
+        ViewGroup.setOnClickListener {
+            number.visibility = if (ViewGroup.visibility == View.INVISIBLE) {
                 View.VISIBLE
             } else {
                 View.VISIBLE
@@ -70,11 +70,26 @@ class nextPage : AppCompatActivity() {
         }
 
 
+        button.setOnClickListener {
+            var firstname = getIntent().getStringExtra("First Name")
+            var lastname = getIntent().getStringExtra("Last Name")
+            var emailadd = getIntent().getStringExtra("Email")
+            var getAge = value.text.toString()
+            var bday = birthView.text.toString()
+            var contactNum = number.text.toString()
 
+            val intent = Intent(this, profile::class.java)
+            intent.putExtra("First Name", firstname)
+            intent.putExtra("Last Name", lastname)
+            intent.putExtra("Email", emailadd)
+            intent.putExtra("Age", getAge)
+            intent.putExtra("Birthday", bday)
+            intent.putExtra("Phone Number", contactNum)
+
+            startActivity(intent)
+
+        }
 
 
     }
-
-
-
 }
